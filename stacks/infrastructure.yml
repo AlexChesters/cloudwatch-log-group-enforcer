@@ -1,0 +1,40 @@
+Transform: AWS::Serverless-2016-10-31
+Description: Infrastructure for cloudwatch-log-group-enforcer
+Resources:
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: cloudwatch-log-group-enforcer-cloudwatch-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                Resource:
+                  - "*"
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../build/
+      Handler: cloudwatch-log-group-enforcer/main.handler
+      # Events:
+      #   ScheduledTrigger:
+      #     Type: Schedule
+      #     Properties:
+      #       Schedule: rate(1 hour)
+      Runtime: python3.9
+      FunctionName: cloudwatch-log-group-enforcer
+      MemorySize: 128
+      Role: !GetAtt Role.Arn
+      Timeout: 10

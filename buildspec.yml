@@ -1,0 +1,12 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+  build:
+    commands:
+      - sh ci/scripts/build.sh
+      - aws cloudformation package --template-file ./stacks/infrastructure.yml --s3-bucket $ARTIFACTS_BUCKET --s3-prefix artifacts/cloudwatch-log-group-enforcer --output-template-file ./stacks/infrastructure.yml
+artifacts:
+  files: "**/*"

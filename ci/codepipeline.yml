@@ -1,0 +1,101 @@
+Description: Pipeline for cloudwatch-log-group-enforcer
+Resources:
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - codebuild.amazonaws.com
+      ManagedPolicyArns:
+        - !ImportValue core-infrastructure-global-codebuild-base-policy-arn
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+        Location: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+        Path: /artifacts/cloudwatch-log-group-enforcer/
+        Packaging: NONE
+        Name: build
+        NamespaceType: BUILD_ID
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:5.0
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+        EnvironmentVariables:
+          - Value: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+            Name: ARTIFACTS_BUCKET
+            Type: PLAINTEXT
+      ServiceRole: !Ref CodeBuildRole
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+      Name: cloudwatch-log-group-enforcer
+      TimeoutInMinutes: 10
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      ArtifactStore:
+        Type: S3
+        Location: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+      Name: cloudwatch-log-group-enforcer
+      RestartExecutionOnUpdate: true
+      RoleArn: !ImportValue core-infrastructure-global-codepipeline-base-role-arn
+      Stages:
+        - Name: Source
+          Actions:
+            - ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Version: "1"
+                Provider: CodeStarSourceConnection
+              OutputArtifacts:
+                - Name: GitHubSource
+              RunOrder: 1
+              Name: Clone-From-GitHub
+              Namespace: SourceVariables
+              Configuration:
+                ConnectionArn: !ImportValue core-infrastructure-eu-west-1-codestar-github-connection-arn
+                FullRepositoryId: AlexChesters/cloudwatch-log-group-enforcer
+                BranchName: main
+                OutputArtifactFormat: CODE_ZIP
+        - Name: Build
+          Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: "1"
+                Provider: CodeBuild
+              InputArtifacts:
+                - Name: GitHubSource
+              OutputArtifacts:
+                - Name: BuiltSource
+              Namespace: CodeBuildProject
+              RunOrder: 1
+              Name: CodeBuild
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+        - Name: Deploy
+          Actions:
+            - ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: "1"
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: BuiltSource
+              RunOrder: 1
+              Name: Infrastructure-Stack
+              Configuration:
+                ActionMode: REPLACE_ON_FAILURE
+                Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+                StackName: live-cloudwatch-log-group-enforcer-infrastructure
+                RoleArn: !ImportValue core-infrastructure-global-codepipeline-cloudformation-role-arn
+                TemplatePath: BuiltSource::stacks/infrastructure.yml
+                TemplateConfiguration: BuiltSource::stacks/parameters/infrastructure.json
