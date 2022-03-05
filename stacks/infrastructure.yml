@@ -20,7 +20,8 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - dynamodb:GetItem
+                  - logs:DescribeLogGroups
+                  - logs:PutRetentionPolicy
                 Resource:
                   - "*"
   Function:
