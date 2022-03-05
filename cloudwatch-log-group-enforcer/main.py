@@ -10,25 +10,19 @@ import boto3
 
 
 client = boto3.client("logs", region_name="eu-west-1")
-log_groups = []
+paginator = client.get_paginator("describe_log_groups")
 
 
-def fetch_log_groups(nextToken=None):
-    if nextToken:
-        response = client.describe_log_groups(nextToken=nextToken)
-    else:
-        response = client.describe_log_groups()
-
-    for group in response["logGroups"]:
-        log_groups.append(group)
-
-    if "nextToken" in response:
-        print("next token found")
-        fetch_log_groups(response["nextToken"])
-    else:
-        return
+def flatten(l):
+    return [item for sublist in l for item in sublist]
 
 
 def handler(event, context):
-    fetch_log_groups()
-    print("found {0} log groups".format(len(log_groups)))
+    results = [
+        result["logGroups"]
+        for result in paginator.paginate()
+    ]
+
+    log_groups = flatten(results)
+
+    print(len(log_groups))
