@@ -28,11 +28,11 @@ Resources:
     Properties:
       CodeUri: ../build/
       Handler: cloudwatch-log-group-enforcer/main.handler
-      # Events:
-      #   ScheduledTrigger:
-      #     Type: Schedule
-      #     Properties:
-      #       Schedule: rate(1 hour)
+      Events:
+        ScheduledTrigger:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
       Runtime: python3.9
       FunctionName: cloudwatch-log-group-enforcer
       MemorySize: 128
