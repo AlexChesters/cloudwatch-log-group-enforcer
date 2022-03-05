@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 
 import boto3
 
+DEFAULT_RETENTION = 3
 
 client = boto3.client("logs", region_name="eu-west-1")
 paginator = client.get_paginator("describe_log_groups")
@@ -25,4 +26,13 @@ def handler(event, context):
 
     log_groups = flatten(results)
 
-    print(len(log_groups))
+    for log_group in log_groups:
+        if "retentionInDays" not in log_group:
+            print(
+                "log group {0} does not have retention, enforcing one of {1} days"
+                .format(log_group["logGroupName"], DEFAULT_RETENTION)
+            )
+            client.put_retention_policy(
+                logGroupName=log_group["logGroupName"],
+                retentionInDays=DEFAULT_RETENTION
+            )
