@@ -15,13 +15,14 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-        - PolicyName: cloudwatch-log-group-enforcer-cloudwatch-policy
+        - PolicyName: cloudwatch-log-group-enforcer-policy
           PolicyDocument:
             Statement:
               - Effect: Allow
                 Action:
                   - logs:DescribeLogGroups
                   - logs:PutRetentionPolicy
+                  - sts:GetCallerIdentity
                 Resource:
                   - "*"
   Function:
