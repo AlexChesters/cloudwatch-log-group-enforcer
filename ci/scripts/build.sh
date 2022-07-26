@@ -8,4 +8,4 @@ cd build
 cp ../requirements.txt .
 pip install -r requirements.txt --target ./package
 
-cp -R ../cloudwatch-log-group-enforcer .
+cp -R ../cloudwatch_log_group_enforcer .

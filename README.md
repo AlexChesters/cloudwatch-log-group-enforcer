@@ -1,4 +1,4 @@
-# cloudwatch-log-group-enforcer
+# cloudwatch_log_group_enforcer
 forces CloudWatch Log Groups to have expiry dates
 
 # Prerequisites
