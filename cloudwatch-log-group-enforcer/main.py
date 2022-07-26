@@ -23,17 +23,17 @@ def region_is_available(region):
     try:
         sts.get_caller_identity()
         return True
-    except ClientError as e:
+    except ClientError:
         return False
 
 
-def handler(event, context):
-    s = Session()
-    regions = s.get_available_regions("cloudwatch")
+def handler(_event, _context):
+    session = Session()
+    regions = session.get_available_regions("cloudwatch")
 
     for region in regions:
         if not region_is_available(region):
-            print("region {0} is not enabled, skipping it".format(region))
+            print(f"region {region} is not enabled, skipping it")
             continue
 
         client = boto3.client("logs", region_name=region)
@@ -48,11 +48,11 @@ def handler(event, context):
 
         for log_group in log_groups:
             if "retentionInDays" not in log_group:
+                log_group_name = log_group["logGroupName"]
                 print(
-                    "log group {0} (region: {1}) does not have retention, enforcing one of {2} days"
-                    .format(log_group["logGroupName"], region, DEFAULT_RETENTION)
+                    f"log group {log_group_name} (region: {region}) does not have retention, enforcing one of {DEFAULT_RETENTION} days"
                 )
                 client.put_retention_policy(
                     logGroupName=log_group["logGroupName"],
                     retentionInDays=DEFAULT_RETENTION
-            )
+                )
