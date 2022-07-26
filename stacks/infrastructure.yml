@@ -29,7 +29,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ../build/
-      Handler: cloudwatch-log-group-enforcer/main.handler
+      Handler: cloudwatch_log_group_enforcer/main.handler
       Events:
         ScheduledTrigger:
           Type: Schedule
