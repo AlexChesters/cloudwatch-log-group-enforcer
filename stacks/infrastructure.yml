@@ -39,4 +39,4 @@ Resources:
       FunctionName: cloudwatch-log-group-enforcer
       MemorySize: 128
       Role: !GetAtt Role.Arn
-      Timeout: 10
+      Timeout: 300
