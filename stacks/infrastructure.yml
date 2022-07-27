@@ -34,7 +34,7 @@ Resources:
         ScheduledTrigger:
           Type: Schedule
           Properties:
-            Schedule: rate(1 hour)
+            Schedule: rate(1 day)
       Runtime: python3.9
       FunctionName: cloudwatch-log-group-enforcer
       MemorySize: 128
