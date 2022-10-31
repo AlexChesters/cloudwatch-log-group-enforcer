@@ -28,7 +28,7 @@ Resources:
   Function:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../build/
+      CodeUri: ../lambda_dist/
       Handler: cloudwatch_log_group_enforcer/main.handler
       Events:
         ScheduledTrigger:
