@@ -7,5 +7,4 @@ forces CloudWatch Log Groups to have expiry dates
 # Installation
 
 1. clone this repo
-2. `python3 -m venv venv`
-3. `pip install -r requirements.txt`
+2. `make install`
