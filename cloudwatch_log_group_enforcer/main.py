@@ -47,7 +47,7 @@ def handler(_event, _context):
 
         credentials = None
 
-        if account_id is not management_account_id:
+        if account_id != management_account_id:
             print(f"{account_name} is not the organisation management account, assuming role in target account")
 
             sts_client = boto3.client("sts")
