@@ -31,7 +31,7 @@ def handler(_event, _context):
     organisation_accounts_paginator = organisations_client.get_paginator("list_accounts")
 
     organisation_accounts_results = [
-        result["Accounts"]
+        str(result["Accounts"])
         for result in organisation_accounts_paginator.paginate()
     ]
 
