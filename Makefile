@@ -9,4 +9,7 @@ install_poetry:
 package:
 	sh package.sh
 
+run:
+	poetry run python run.py
+
 build: clean install_poetry package
