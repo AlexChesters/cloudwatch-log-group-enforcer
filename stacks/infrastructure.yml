@@ -23,6 +23,7 @@ Resources:
                   - logs:DescribeLogGroups
                   - logs:PutRetentionPolicy
                   - sts:GetCallerIdentity
+                  - organizations:ListAccounts
                 Resource:
                   - "*"
               - Effect: Allow
