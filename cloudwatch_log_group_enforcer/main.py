@@ -31,7 +31,7 @@ def handler(_event, _context):
     organisation_accounts_paginator = organisations_client.get_paginator("list_accounts")
 
     organisation_accounts_results = [
-        str(result["Accounts"])
+        result["Accounts"]
         for result in organisation_accounts_paginator.paginate()
     ]
 
@@ -40,7 +40,7 @@ def handler(_event, _context):
     management_account_id = "008356366354"
 
     for account in organisation_accounts:
-        account_id = account["Id"]
+        account_id = str(account["Id"])
         account_name = account["Name"]
 
         print(f"processing account {account_name} ({account_id})")
