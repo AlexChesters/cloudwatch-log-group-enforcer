@@ -49,6 +49,7 @@ def handler(_event, _context):
 
         if account_id is not management_account_id:
             print(f"{account_name} is not the organisation management account, assuming role in target account")
+
             sts_client = boto3.client("sts")
             assumed_role_object = sts_client.assume_role(
                 RoleArn=f"arn:aws:iam::{account_id}:role/cloudwatch-log-group-enforcer",
