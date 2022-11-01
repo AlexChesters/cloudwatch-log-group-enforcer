@@ -47,3 +47,20 @@ Resources:
       MemorySize: 128
       Role: !GetAtt Role.Arn
       Timeout: 300
+  ErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Period: 60
+      TreatMissingData: notBreaching
+      Statistic: Sum
+      Threshold: 0
+      ActionsEnabled: true
+      AlarmActions:
+        - !ImportValue core-infrastructure-eu-west-1-alarm-topic-arn
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref Function
