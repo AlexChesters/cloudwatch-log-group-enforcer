@@ -60,7 +60,9 @@ def handler(_event, _context):
         for region in regions:
             if not region_is_available(region):
                 print(f"region {region} is not enabled, skipping it")
-                continue
+                # temp to test alarm
+                sys.exit(1)
+                # continue
 
             if credentials:
                 logs_client = boto3.client(
