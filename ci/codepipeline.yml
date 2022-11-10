@@ -43,7 +43,7 @@ Resources:
     Properties:
       ArtifactStore:
         Type: S3
-        Location: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+        Location: !ImportValue ci-infrastructure-build-artifacts-bucket-name
       Name: cloudwatch-log-group-enforcer
       RestartExecutionOnUpdate: true
       RoleArn: !ImportValue ci-infrastructure-codepipeline-base-execution-role
