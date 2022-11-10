@@ -52,7 +52,7 @@ def handler(_event, _context):
 
             sts_client = boto3.client("sts")
             assumed_role_object = sts_client.assume_role(
-                RoleArn=f"arn:aws:iam::{account_id}:role/cloudwatch-log-group-enforcer",
+                RoleArn=f"arn:aws:iam::{account_id}:role/cloudwatch-log-group-enforcer-member-account-role",
                 RoleSessionName="log-group-enforcer"
             )
             credentials = assumed_role_object["Credentials"]
