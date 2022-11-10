@@ -60,7 +60,7 @@ Resources:
       Threshold: 0
       ActionsEnabled: true
       AlarmActions:
-        - !ImportValue core-infrastructure-eu-west-1-alarm-topic-arn
+        - !ImportValue notification-topic
       Dimensions:
         - Name: FunctionName
           Value: !Ref Function

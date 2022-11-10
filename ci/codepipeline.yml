@@ -12,13 +12,13 @@ Resources:
               Service:
                 - codebuild.amazonaws.com
       ManagedPolicyArns:
-        - !ImportValue core-infrastructure-global-codebuild-base-policy-arn
+        - !ImportValue ci-infrastructure-codebuild-base-policy
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
       Artifacts:
         Type: CODEPIPELINE
-        Location: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+        Location: !ImportValue ci-infrastructure-build-artifacts-bucket-name
         Path: /artifacts/cloudwatch-log-group-enforcer/
         Packaging: NONE
         Name: build
@@ -29,7 +29,7 @@ Resources:
         PrivilegedMode: false
         Type: LINUX_CONTAINER
         EnvironmentVariables:
-          - Value: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
+          - Value: !ImportValue ci-infrastructure-build-artifacts-bucket-name
             Name: ARTIFACTS_BUCKET
             Type: PLAINTEXT
       ServiceRole: !Ref CodeBuildRole
@@ -46,7 +46,7 @@ Resources:
         Location: !ImportValue core-infrastructure-eu-west-1-build-artifacts-bucket
       Name: cloudwatch-log-group-enforcer
       RestartExecutionOnUpdate: true
-      RoleArn: !ImportValue core-infrastructure-global-codepipeline-base-role-arn
+      RoleArn: !ImportValue ci-infrastructure-codepipeline-base-execution-role
       Stages:
         - Name: Source
           Actions:
@@ -61,9 +61,9 @@ Resources:
               Name: Clone-From-GitHub
               Namespace: SourceVariables
               Configuration:
-                ConnectionArn: !ImportValue core-infrastructure-eu-west-1-codestar-github-connection-arn
+                ConnectionArn: !ImportValue ci-infrastructure-codestar-connection
                 FullRepositoryId: AlexChesters/cloudwatch-log-group-enforcer
-                BranchName: main
+                BranchName: new-account
                 OutputArtifactFormat: CODE_ZIP
         - Name: Build
           Actions:
@@ -96,6 +96,6 @@ Resources:
                 ActionMode: REPLACE_ON_FAILURE
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 StackName: live-cloudwatch-log-group-enforcer-infrastructure
-                RoleArn: !ImportValue core-infrastructure-global-codepipeline-cloudformation-role-arn
+                RoleArn: !ImportValue ci-infrastructure-codepipeline-base-cloudformation-role
                 TemplatePath: BuiltSource::stacks/infrastructure.yml
                 TemplateConfiguration: BuiltSource::stacks/parameters/infrastructure.json
