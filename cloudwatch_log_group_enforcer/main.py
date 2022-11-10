@@ -1,5 +1,9 @@
 import os
 import sys
+import yaml
+
+# absolute path to the directory name this script lives in
+script_dir = os.path.dirname(__file__)
 
 if 'LAMBDA_TASK_ROOT' in os.environ:
     sys.path.append(f"{os.environ['LAMBDA_TASK_ROOT']}/package")
@@ -27,54 +31,32 @@ def handler(_event, _context):
     session = Session()
     regions = session.get_available_regions("cloudwatch")
 
-    organisations_client = boto3.client("organizations")
-    organisation_accounts_paginator = organisations_client.get_paginator("list_accounts")
+    accounts_file_path = os.path.join(script_dir, "accounts.yml")
+    with open(accounts_file_path, "r") as stream:
+        accounts = yaml.safe_load(stream)["accounts"]
 
-    organisation_accounts_results = [
-        result["Accounts"]
-        for result in organisation_accounts_paginator.paginate()
-    ]
+    for account in accounts:
+        print(f"processing account {account}")
 
-    organisation_accounts = flatten(organisation_accounts_results)
-
-    management_account_id = "008356366354"
-
-    for account in organisation_accounts:
-        account_id = str(account["Id"])
-        account_name = account["Name"]
-
-        print(f"processing account {account_name} ({account_id})")
-
-        credentials = None
-
-        if account_id != management_account_id:
-            print(f"{account_name} is not the organisation management account, assuming role in target account")
-
-            sts_client = boto3.client("sts")
-            assumed_role_object = sts_client.assume_role(
-                RoleArn=f"arn:aws:iam::{account_id}:role/cloudwatch-log-group-enforcer-member-account-role",
-                RoleSessionName="log-group-enforcer"
-            )
-            credentials = assumed_role_object["Credentials"]
+        sts_client = boto3.client("sts")
+        assumed_role_object = sts_client.assume_role(
+            RoleArn=f"arn:aws:iam::{account}:role/cloudwatch-log-group-enforcer-member-account-role",
+            RoleSessionName="log-group-enforcer"
+        )
+        credentials = assumed_role_object["Credentials"]
 
         for region in regions:
             if not region_is_available(region):
                 print(f"region {region} is not enabled, skipping it")
                 continue
 
-            if credentials:
-                logs_client = boto3.client(
-                    "logs",
-                    region_name=region,
-                    aws_access_key_id=credentials["AccessKeyId"],
-                    aws_secret_access_key=credentials["SecretAccessKey"],
-                    aws_session_token=credentials["SessionToken"]
-                )
-            else:
-                logs_client = boto3.client(
-                    "logs",
-                    region_name=region
-                )
+            logs_client = boto3.client(
+                "logs",
+                region_name=region,
+                aws_access_key_id=credentials["AccessKeyId"],
+                aws_secret_access_key=credentials["SecretAccessKey"],
+                aws_session_token=credentials["SessionToken"]
+            )
 
             log_groups_paginator = logs_client.get_paginator("describe_log_groups")
 
