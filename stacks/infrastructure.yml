@@ -31,7 +31,8 @@ Resources:
                 Action:
                   - sts:AssumeRole
                 Resource:
-                  - "arn:aws:iam::*:role/cloudwatch-log-group-enforcer-member-account-role"
+                  - arn:aws:iam::008356366354:role/cloudwatch-log-group-enforcer-list-accounts
+                  - arn:aws:iam::*:role/cloudwatch-log-group-enforcer-member-account-role
   Function:
     Type: AWS::Serverless::Function
     Properties:
