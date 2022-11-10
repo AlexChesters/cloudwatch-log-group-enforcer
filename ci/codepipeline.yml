@@ -63,7 +63,7 @@ Resources:
               Configuration:
                 ConnectionArn: !ImportValue ci-infrastructure-codestar-connection
                 FullRepositoryId: AlexChesters/cloudwatch-log-group-enforcer
-                BranchName: new-account
+                BranchName: main
                 OutputArtifactFormat: CODE_ZIP
         - Name: Build
           Actions:
