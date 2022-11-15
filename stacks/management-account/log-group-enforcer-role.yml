@@ -1,0 +1,27 @@
+Description: IAM role for use by AlexChesters/cloudwatch-log-group-enforcer
+Resources:
+  LogGroupEnforcerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::723247229166:role/cloudwatch-log-group-enforcer
+              Service:
+                - lambda.amazonaws.com
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      RoleName: cloudwatch-log-group-enforcer-list-accounts
+      Policies:
+        - PolicyName: cloudwatch-log-group-enforcer-policy
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - organizations:ListAccounts
+                Resource:
+                  - "*"
