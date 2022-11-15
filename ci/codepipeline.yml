@@ -97,5 +97,5 @@ Resources:
                 Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
                 StackName: live-cloudwatch-log-group-enforcer-infrastructure
                 RoleArn: !ImportValue ci-infrastructure-codepipeline-base-cloudformation-role
-                TemplatePath: BuiltSource::stacks/infrastructure.yml
-                TemplateConfiguration: BuiltSource::stacks/parameters/infrastructure.json
+                TemplatePath: BuiltSource::stacks/accounts-janitor-account/infrastructure.yml
+                TemplateConfiguration: BuiltSource::stacks/accounts-janitor-account/parameters/infrastructure.json
