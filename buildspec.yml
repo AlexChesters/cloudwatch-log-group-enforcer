@@ -7,6 +7,6 @@ phases:
   build:
     commands:
       - make build
-      - aws cloudformation package --template-file ./stacks/infrastructure.yml --s3-bucket $ARTIFACTS_BUCKET --s3-prefix artifacts/cloudwatch-log-group-enforcer --output-template-file ./stacks/infrastructure.yml
+      - aws cloudformation package --template-file ./stacks/accounts-janitor-account/infrastructure.yml --s3-bucket $ARTIFACTS_BUCKET --s3-prefix artifacts/cloudwatch-log-group-enforcer --output-template-file ./stacks/accounts-janitor-account/infrastructure.yml
 artifacts:
   files: "**/*"
