@@ -45,9 +45,9 @@ Resources:
             Schedule: rate(1 day)
       Runtime: python3.9
       FunctionName: cloudwatch-log-group-enforcer
-      MemorySize: 128
+      MemorySize: 256
       Role: !GetAtt Role.Arn
-      Timeout: 300
+      Timeout: 600
   ErrorAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
