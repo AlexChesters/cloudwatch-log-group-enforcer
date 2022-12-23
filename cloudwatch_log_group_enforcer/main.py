@@ -58,6 +58,10 @@ def handler(_event, _context):
         account_id = str(account["Id"])
         account_name = account["Name"]
 
+        if account_id == "950174517461":
+            print(f"ignoring account 950174517461 as it is scheduled for deletion")
+            return
+
         print(f"processing account {account_name} ({account_id})")
 
         target_account_credentials = None
