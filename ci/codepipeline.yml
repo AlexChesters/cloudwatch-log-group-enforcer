@@ -47,6 +47,7 @@ Resources:
       Name: cloudwatch-log-group-enforcer
       RestartExecutionOnUpdate: true
       RoleArn: !ImportValue ci-infrastructure-codepipeline-base-execution-iam-role
+      PipelineType: V2
       Stages:
         - Name: Source
           Actions:
