@@ -13,6 +13,16 @@ Resources:
                 - arn:aws:iam::723247229166:role/cloudwatch-log-group-enforcer
               Service:
                 - lambda.amazonaws.com
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::723247229166:root
+            Condition:
+              StringEquals:
+                aws:PrincipalOrgID: o-hru7a3vwm2
+              ArnLike:
+                aws:PrincipalARN: arn:aws:iam::723247229166:role/aws-reserved/sso.amazonaws.com/*
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       RoleName: cloudwatch-log-group-enforcer-list-accounts
@@ -22,6 +32,6 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - organizations:ListAccounts
+                  - cloudformation:ListStackInstances
                 Resource:
-                  - "*"
+                  - !Sub "arn:${AWS::Partition}:cloudformation:eu-west-1:${AWS::AccountId}:stackset/log-group-enforcer-role:*"
