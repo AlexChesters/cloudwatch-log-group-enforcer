@@ -10,7 +10,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.14"
 ]
-dependencies = ["boto3>=1.25.4,<2"]
+dependencies = ["boto3>=1.42.81,<2"]
 
 [tool.uv]
 
