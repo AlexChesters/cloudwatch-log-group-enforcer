@@ -15,6 +15,11 @@ from cloudwatch_log_group_enforcer.accounts.get_accounts_to_inspect import get_a
 from cloudwatch_log_group_enforcer.utils.assume_role import assume_role
 
 DEFAULT_RETENTION = 3
+REGION_DENYLIST = [
+    # appears to be down due to missile strikes in the middle east
+    # Could not connect to the endpoint URL: \"https://sts.me-south-1.amazonaws.com/\"
+    "me-south-1"
+]
 
 def region_is_available(region):
     sts = boto3.client('sts', region_name=region)
@@ -26,7 +31,7 @@ def region_is_available(region):
 
 def handler(_event, _context):
     session = Session()
-    regions = session.get_available_regions("cloudwatch")
+    regions = [region for region in session.get_available_regions("cloudwatch") if region not in REGION_DENYLIST]
 
     accounts_to_inspect = get_accounts_to_inspect()
 
