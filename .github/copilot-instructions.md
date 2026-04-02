@@ -34,6 +34,15 @@ pyproject.toml                   # Poetry project metadata and dependencies
 poetry.lock                      # Locked dependency versions
 ```
 
+## Key Constants (`cloudwatch_log_group_enforcer/main.py`)
+
+| Constant | Value | Purpose |
+|----------|-------|---------|
+| `DEFAULT_RETENTION` | `3` | Days of retention applied to log groups that have none |
+| `REGION_DENYLIST` | `["me-south-1", ...]` | Regions that are explicitly skipped before the availability check (e.g. regions that are unreachable due to infrastructure outages) |
+
+When adding a region to the denylist, add a comment explaining why.
+
 ## Language and Dependencies
 
 - **Python 3.9** (matches the Lambda runtime)
@@ -87,8 +96,9 @@ The solution spans multiple AWS accounts:
 1. Lambda is triggered on a **daily schedule** (EventBridge `rate(1 day)`).
 2. `get_accounts_to_inspect()` assumes `arn:aws:iam::008356366354:role/cloudwatch-log-group-enforcer-list-accounts` and calls `cloudformation:ListStackInstances` on the StackSet **`log-group-enforcer-role`** in `eu-west-1` to get the list of target account IDs.
 3. For each target account, the Lambda assumes `arn:aws:iam::<account_id>:role/cloudwatch-log-group-enforcer-target-account-role`.
-4. For each available AWS region, it pages through all CloudWatch Log Groups using `describe_log_groups`.
-5. Any log group missing a `retentionInDays` value receives a `put_retention_policy` call setting it to `DEFAULT_RETENTION` (3 days).
+4. Regions in `REGION_DENYLIST` are filtered out before iteration. Remaining regions are then checked for availability via `sts.get_caller_identity()`; any region returning a `ClientError` is also skipped.
+5. For each available AWS region, it pages through all CloudWatch Log Groups using `describe_log_groups`.
+6. Any log group missing a `retentionInDays` value receives a `put_retention_policy` call setting it to `DEFAULT_RETENTION` (3 days).
 
 ## CloudFormation / SAM Templates
 
@@ -107,8 +117,5 @@ The pipeline is deployed to the `accounts-janitor` AWS account in `eu-west-1`.
 
 ## Known Issues / Notes
 
-- The `flatten` helper is defined twice: once as a module (`cloudwatch_log_group_enforcer/utils/flatten.py`) and once as a local function inside `main.py`. The local duplicate should be removed in favour of the shared utility.
 - There are no unit or integration tests. When adding new logic, consider adding a `tests/` directory with `pytest`.
-- The `parameters/infrastructure.json` file contains a `Tags` block referencing `osrs-skills-tracker`, which appears to be copy-pasted from another project and may need updating.
 - The Lambda timeout is set to **600 seconds** (10 minutes) to allow for processing many accounts and regions.
-- Regions are checked for availability by calling `sts.get_caller_identity()`; regions that return a `ClientError` are skipped.
