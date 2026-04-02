@@ -1,15 +1,9 @@
-.PHONY: clean install_poetry package
-
-install_poetry:
-	( \
-		echo 'Installing poetry...' && \
-		curl -sSL https://install.python-poetry.org | POETRY_HOME=${HOME}/.poetry python3 - \
-	)
+.PHONY: clean package
 
 package:
 	sh package.sh
 
 run:
-	AWS_PROFILE=accounts-janitor poetry run python run.py
+	AWS_PROFILE=accounts-janitor uv run run.py
 
-build: clean install_poetry package
+build: clean package

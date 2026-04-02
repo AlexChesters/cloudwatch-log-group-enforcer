@@ -1,11 +1,7 @@
 set -e
 
-export PATH="${HOME}/.poetry/bin:${PATH}"
-export VENV_PATH=$(poetry env info -p)
+uv sync --no-dev
 
-poetry install --only main
-
-poetry build --format wheel
-pip install ./dist/*.whl -t lambda_dist
-
-cd lambda_dist && zip lambda * -r
+mkdir -p build
+cp -R .venv/lib/python3.*/site-packages/* build
+cp -R cloudwatch_log_group_enforcer/ build/
