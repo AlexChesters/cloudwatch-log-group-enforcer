@@ -30,8 +30,8 @@ scripts/
 buildspec.yml                    # CodeBuild build specification
 package.sh                       # Packages the Lambda deployment artifact
 Makefile                         # Developer convenience targets
-pyproject.toml                   # Poetry project metadata and dependencies
-poetry.lock                      # Locked dependency versions
+pyproject.toml                   # uv project metadata and dependencies
+uv.lock                          # Locked dependency versions
 ```
 
 ## Key Constants (`cloudwatch_log_group_enforcer/main.py`)
@@ -46,7 +46,7 @@ When adding a region to the denylist, add a comment explaining why.
 ## Language and Dependencies
 
 - **Python 3.9** (matches the Lambda runtime)
-- **Poetry** for dependency management
+- **uv** for dependency management
 - Runtime dependency: `boto3 ^1.25.4` (AWS SDK)
 - No test framework is configured; there are currently **no automated tests**.
 
@@ -55,14 +55,13 @@ When adding a region to the denylist, add a comment explaining why.
 ### Install dependencies
 
 ```bash
-make install_poetry   # installs Poetry into ~/.poetry
-poetry install        # installs project dependencies into a virtual environment
+uv install        # installs project dependencies into a virtual environment
 ```
 
 Or run both in sequence via:
 
 ```bash
-make build   # clean + install_poetry + package
+make build   # clean + package
 ```
 
 ### Package for Lambda deployment
