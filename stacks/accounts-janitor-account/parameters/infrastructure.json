@@ -1,7 +1,7 @@
 {
   "Parameters": {},
   "Tags": {
-    "Project": "osrs-skills-tracker",
+    "Project": "cloudwatch-log-group-enforcer",
     "Environment": "live"
   }
 }

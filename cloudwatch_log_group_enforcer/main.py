@@ -10,13 +10,11 @@ import boto3
 from boto3.session import Session
 from botocore.exceptions import ClientError
 
+from cloudwatch_log_group_enforcer.utils.flatten import flatten
 from cloudwatch_log_group_enforcer.accounts.get_accounts_to_inspect import get_accounts_to_inspect
 from cloudwatch_log_group_enforcer.utils.assume_role import assume_role
 
 DEFAULT_RETENTION = 3
-
-def flatten(l):
-    return [item for sublist in l for item in sublist]
 
 def region_is_available(region):
     sts = boto3.client('sts', region_name=region)
