@@ -3,12 +3,12 @@ name = "cloudwatch-log-group-enforcer"
 version = "0.1.0"
 description = ""
 authors = [{ name = "Alex Chesters", email = "10558792+AlexChesters@users.noreply.github.com" }]
-requires-python = ">=3.13,<4"
+requires-python = ">=3.14,<4"
 readme = "README.md"
 license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.13"
+    "Programming Language :: Python :: 3.14"
 ]
 dependencies = ["boto3>=1.25.4,<2"]
 
