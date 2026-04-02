@@ -43,7 +43,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(1 day)
-      Runtime: python3.9
+      Runtime: python3.14
       FunctionName: cloudwatch-log-group-enforcer
       MemorySize: 256
       Role: !GetAtt Role.Arn
